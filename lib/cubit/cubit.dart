@@ -26,6 +26,7 @@ class NoteApp extends Cubit<AppStates> {
   }
 
   addNote(content, col, context) async {
+      
     DateTime now = DateTime.now();
     // String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
     int r = await DBHelper.insertNote(NoteModele(
