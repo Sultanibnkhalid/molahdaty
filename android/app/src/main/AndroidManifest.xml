@@ -3,6 +3,18 @@
         android:label="my_notes"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+        <uses-permission android:name="android.permission.WAKE_LOCK"/>
+        <uses-permission android:name="android.permission.VIBRATE"/>
+        <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+        <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+        <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+        <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+        <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+        <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+        <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
+            android:maxSdkVersion="32" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -29,6 +41,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <service android:name="com.gdelataillade.alarm.services.NotificationOnKillService" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility?hl=en and

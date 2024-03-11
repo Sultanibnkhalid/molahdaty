@@ -6,7 +6,7 @@ import 'package:path/path.dart' as p;
 
 class DBHelper {
   static String noteStatment =
-      "CREATE TABLE notes (id	INTEGER,content TEXT,	date	TEXT,	time	TEXT,	img	BLOB,color	TEXT,favorite 	INTEGER, imgdata 	TEXT, parm1 	TEXT, parm2 	TEXT, parm3 	TEXT,PRIMARY KEY( id  AUTOINCREMENT))";
+      "CREATE TABLE notes (id	INTEGER,content TEXT,	date	DATETIME,	time	TEXT,	img	BLOB,color	TEXT,favorite 	INTEGER, imgdata 	TEXT, parm1 	TEXT, parm2 	TEXT, parm3 	TEXT,PRIMARY KEY( id  AUTOINCREMENT))";
 
   static String dbName = 'path.db';
 
@@ -36,39 +36,54 @@ class DBHelper {
     }
   } //end creat db function
 
-  static Future<int> insertNote(NoteModele note) async {
+  static Future<Database> openDatabase() async {
     sqfliteFfiInit();
     var path = await databaseFactory.getDatabasesPath();
     var fullDBPath = p.join(path, dbName);
     var db = await databaseFactory.openDatabase(
       fullDBPath,
-      options: OpenDatabaseOptions(
-        version: dbVERSION,
-        onCreate: (db, version) {
-          db.execute(noteStatment).then((value) => {value});
-        },
-      ),
     );
+
+    return db;
+  }
+
+  static Future<int> insertNote(NoteModele note) async {
+    // sqfliteFfiInit();
+    // var path = await databaseFactory.getDatabasesPath();
+    // var fullDBPath = p.join(path, dbName);
+    // var db = await databaseFactory.openDatabase(
+    //   fullDBPath,
+    //   // options: OpenDatabaseOptions(
+    //   //   version: dbVERSION,
+    //   //   onCreate: (db, version) {
+    //   //     db.execute(noteStatment).then((value) => {value});
+    //   //   },
+    //   // ),
+    // );
+    var db = await openDatabase();
+
     return await db.rawInsert(
         "INSERT INTO notes (content,date,color,favorite)VALUES ('${note.content}','${note.date}','${note.color}',${note.isLiked});");
   }
 
   //function excutes query
   static Future<List<Map<String, dynamic>>> getNotes() async {
-    sqfliteFfiInit();
-    var path = await databaseFactory.getDatabasesPath();
-    var fullDBPath = p.join(path, dbName);
-    var db = await databaseFactory.openDatabase(
-      fullDBPath,
-      options: OpenDatabaseOptions(
-        version: dbVERSION,
-        onCreate: (db, version) {
-          db.execute(noteStatment).then((value) => {value});
-        },
-      ),
-    );
+    var db = await openDatabase();
     return await db.rawQuery(
-        "SELECT id,content,img,imgdata,favorite,color,date as dt FROM notes ORDER BY dt Desc; ");
+        "SELECT id,content,img,imgdata,favorite,color,date,strftime('%Y-%m-%d %H:%M',date) as ti FROM notes ORDER BY date Desc; ");
+  }
+
+  //delete note
+  static Future<int> deleteNote(int id) async {
+    // sqfliteFfiInit();
+    // var path = await databaseFactory.getDatabasesPath();
+    // var fullDBPath = p.join(path, dbName);
+    // var db = await databaseFactory.openDatabase(
+    //   fullDBPath,
+    // );
+    var db = await openDatabase();
+
+    return await db.delete(tbNotes, where: 'id=?', whereArgs: [id]);
   }
 }
 

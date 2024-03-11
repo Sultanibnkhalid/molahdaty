@@ -4,6 +4,7 @@ import 'package:my_notes/helpers/db_helper.dart';
 import 'package:my_notes/layouts/main_layout.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_notes/shared/observer.dart';
+import 'package:toast/toast.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return MaterialApp(
       title: 'sultan\'s notes',
       theme: ThemeData(
@@ -36,21 +38,30 @@ class MyApp extends StatelessWidget {
         // Define the default `TextTheme`. Use this to specify the default
         // text styling for headlines, titles, bodies of text, and more.
         textTheme: const TextTheme(
-          displayLarge: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.normal,
-          ),
-          // TRY THIS: Change one of the GoogleFonts
-          //           to "lato", "poppins", or "lora".
-          //           The title uses "titleLarge"
-          //           and the middle text uses "bodyMedium".
-          // titleLarge: GoogleFonts.oswald(
-          //   fontSize: 15,
-          //   fontStyle: FontStyle.normal,
-          // ),
-          // bodyMedium: GoogleFonts.merriweather(),
-          // displaySmall: GoogleFonts.pacifico(),
-        ),
+            displayLarge: TextStyle(
+              fontFamily: 'Whisper',
+              fontSize: 15,
+              fontWeight: FontWeight.normal,
+            ),
+            // TRY THIS: Change one of the GoogleFonts
+            //           to "lato", "poppins", or "lora".
+            //           The title uses "titleLarge"
+            //           and the middle text uses "bodyMedium".
+            // titleLarge: GoogleFonts.oswald(
+            //   fontSize: 15,
+            //   fontStyle: FontStyle.normal,
+            // ),
+            bodyMedium: TextStyle(
+              color: Colors.black,
+              fontFamily: 'ElMessiri',
+              fontWeight: FontWeight.w400,
+              fontSize: 30,
+            ),
+            displaySmall: TextStyle(
+              color: Colors.black,
+              fontFamily: 'ElMessiri',
+              fontWeight: FontWeight.w300,
+            )),
       ),
       home: HomeScreen(),
     );
