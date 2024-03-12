@@ -28,6 +28,7 @@ dependencies:
   alarm: ^3.0.12
   date_time_picker: ^2.1.0
   flutter_local_notifications: ^17.0.0
+  flutter_timezone: ^1.0.8
    
  
 

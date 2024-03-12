@@ -1,5 +1,8 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:my_notes/main.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 class NotificationHelper {
   Future<void> init() async {
@@ -15,13 +18,20 @@ class NotificationHelper {
     // );
 
     final InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
+        InitializationSettings(
+            android: initializationSettingsAndroid, iOS: null);
+    tz.initializeTimeZones();
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (details) {
-        //handel notif..
+      onDidReceiveNotificationResponse:
+          (NotificationResponse notificationResponse) async {
+        // ...
       },
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+      // onDidReceiveNotificationResponse: (details) {
+      //   //handel notif..
+      // },
     );
   }
 
@@ -29,12 +39,14 @@ class NotificationHelper {
     //Handle notification tapped logic here
   }
 
-  static addNoteAlarm(
+  Future<void> addNoteAlarm(
     id,
     title,
     body,
-    time,
+    zone,
   ) async {
+    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(currentTimeZone));
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       'note_alarm',
@@ -43,12 +55,19 @@ class NotificationHelper {
       icon: 'app_icon',
       sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
     );
+    // TZDateTime tim = DateTime.now().add(Duration(seconds: 20));
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     //set the Schedule
     await flutterLocalNotificationsPlugin.zonedSchedule(
-        id, title, body, time, platformChannelSpecifics,
+        id,
+        title,
+        body,
+        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+        platformChannelSpecifics,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
   }
+
+  void notificationTapBackground(NotificationResponse details) {}
 }

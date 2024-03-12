@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:my_notes/models/note_model.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -19,16 +20,30 @@ class DBHelper {
 
   static Future<int> createDB() async {
     try {
-      sqfliteFfiInit();
-      var path = await databaseFactory.getDatabasesPath();
-      var fullDBPath = p.join(path, dbName);
-      var db = await databaseFactory.openDatabase(fullDBPath,
-          options: OpenDatabaseOptions(
-            version: dbVERSION,
-            onCreate: (db, version) {
-              db.execute(noteStatment).then((value) => {value});
-            },
-          ));
+      var path = '';
+      if (Platform.isWindows || Platform.isLinux) {
+        sqfliteFfiInit();
+        path = await databaseFactory.getDatabasesPath();
+        var fullDBPath = p.join(path, dbName);
+        var db = await databaseFactory.openDatabase(fullDBPath,
+            options: OpenDatabaseOptions(
+              version: dbVERSION,
+              onCreate: (db, version) {
+                db.execute(noteStatment).then((value) => {value});
+              },
+            ));
+      }
+      if (Platform.isAndroid) {
+        path = await getDatabasesPath();
+        var fullDBPath = p.join(path, dbName);
+        var db = await openDatabase(
+          fullDBPath,
+          version: dbVERSION,
+          onCreate: (db, version) {
+            db.execute(noteStatment).then((value) => {value});
+          },
+        );
+      }
 
       return 1;
     } catch (error) {
@@ -36,14 +51,37 @@ class DBHelper {
     }
   } //end creat db function
 
-  static Future<Database> openDatabase() async {
-    sqfliteFfiInit();
-    var path = await databaseFactory.getDatabasesPath();
-    var fullDBPath = p.join(path, dbName);
-    var db = await databaseFactory.openDatabase(
-      fullDBPath,
-    );
-
+  static Future<Database?> openDB() async {
+    // sqfliteFfiInit();
+    // var path = await databaseFactory.getDatabasesPath().then((value) => value);
+    // var fullDBPath = p.join(path, dbName);
+    // var db = await databaseFactory.openDatabase(
+    //   fullDBPath,
+    // );
+    Database? db;
+    var path = '';
+    if (Platform.isWindows || Platform.isLinux) {
+      sqfliteFfiInit();
+      path = await databaseFactory.getDatabasesPath();
+      var fullDBPath = p.join(path, dbName);
+      db = await databaseFactory.openDatabase(fullDBPath,
+          options: OpenDatabaseOptions(
+            version: dbVERSION,
+            onCreate: (db, version) {
+              db.execute(noteStatment).then((value) => {value});
+            },
+          ));
+    } else if (Platform.isAndroid) {
+      path = await getDatabasesPath();
+      var fullDBPath = p.join(path, dbName);
+      db = await openDatabase(
+        fullDBPath,
+        version: dbVERSION,
+        onCreate: (db, version) {
+          db.execute(noteStatment).then((value) => {value});
+        },
+      );
+    }
     return db;
   }
 
@@ -60,16 +98,17 @@ class DBHelper {
     //   //   },
     //   // ),
     // );
-    var db = await openDatabase();
+    var db = await openDB().then((value) => value);
 
-    return await db.rawInsert(
+    return await db!.rawInsert(
         "INSERT INTO notes (content,date,color,favorite)VALUES ('${note.content}','${note.date}','${note.color}',${note.isLiked});");
   }
 
   //function excutes query
   static Future<List<Map<String, dynamic>>> getNotes() async {
-    var db = await openDatabase();
-    return await db.rawQuery(
+    var db = await openDB().then((value) => value);
+    // var db = await openDatabase();
+    return await db!.rawQuery(
         "SELECT id,content,img,imgdata,favorite,color,date,strftime('%Y-%m-%d %H:%M',date) as ti FROM notes ORDER BY date Desc; ");
   }
 
@@ -81,9 +120,9 @@ class DBHelper {
     // var db = await databaseFactory.openDatabase(
     //   fullDBPath,
     // );
-    var db = await openDatabase();
+    var db = await openDB().then((value) => value);
 
-    return await db.delete(tbNotes, where: 'id=?', whereArgs: [id]);
+    return await db!.delete(tbNotes, where: 'id=?', whereArgs: [id]);
   }
 }
 

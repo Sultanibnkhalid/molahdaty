@@ -53,14 +53,18 @@ class NoteApp extends Cubit<AppStates> {
           content: content, date: now, id: 0, isLiked: 0, color: col));
       // Navigator.pop(context);
       if (isAlarm) {
-        setAlarm(
-            id: r,
-            time: time,
-            text: content,
-            title: DateFormat('yyyy-MM-dd:kk:mm').format(DateTime.now()));
+        String body = content.length > 50 ? content.substring(0, 30) : content;
+        await NotificationHelper().addNoteAlarm(r,
+            DateFormat('yyyy-MM-dd:kk:mm').format(DateTime.now()), body, time);
+        // setAlarm(
+        //     id: r,
+        //     time: time,
+        //     text: content,
+        //
+        //    title: DateFormat('yyyy-MM-dd:kk:mm').format(DateTime.now()));
+        selectedScreen = 0;
+        getNotes();
       }
-      selectedScreen = 0;
-      getNotes();
     }
     // emit(SaveNoteState());
   }
@@ -68,7 +72,8 @@ class NoteApp extends Cubit<AppStates> {
   //retrive  notes data from db
   static List<NoteModele> notes = [];
   void getNotes() async {
-    final List<Map<String, dynamic>> maps = await DBHelper.getNotes();
+    final List<Map<String, dynamic>> maps =
+        await DBHelper.getNotes().then((value) => value);
     // Convert the List<Map<String, dynamic> into a List<Breed>.
     notes =
         List.generate(maps.length, (index) => NoteModele.fromMap(maps[index]));
@@ -88,7 +93,7 @@ class NoteApp extends Cubit<AppStates> {
       required String text,
       required title}) async {
     String body = text.length > 50 ? text.substring(0, 30) : text;
-    await NotificationHelper.addNoteAlarm(id, title, body, time);
+    await NotificationHelper().addNoteAlarm(id, title, body, time);
     // await Alarm.init();
     // final alarmSettings = AlarmSettings(
     //   id: id,

@@ -77,40 +77,38 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           bottomNavigationBar: BottomNavigationBar(
             backgroundColor: Colors.yellow.shade400,
             type: BottomNavigationBarType.fixed,
-            onTap: (value) {
+            onTap: (value) async {
               //handel the event
               //  NoteApp.get(context).isShowBottomSheet?false:true;
               if (value == 3) {
                 NoteApp.get(context).changeBottomSheetState();
               }
               if (value == 2) {
-                showTimePicker(
+                await showTimePicker(
                   context: context,
                   initialTime: TimeOfDay.now(),
                 ).then((value) {
                   // alarmTime += (value!.format(context)).toString();
                   time = value;
                 });
-                showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.parse('2025-03-15'),
-                ).then((value) {
-                  // alarmTime += DateFormat.yMMMd().format(value!);
-                  date = value;
-                });
+                // await showDatePicker(
+                //   context: context,
+                //   initialDate: DateTime.now(),
+                //   firstDate: DateTime.now(),
+                //   lastDate: DateTime.parse('2025-03-15'),
+                // ).then((value) {
+                //   // alarmTime += DateFormat.yMMMd().format(value!);
+                //   date = value;
+                // });
 
-                if (date != null && time != null) {
-                  isWithAlarm = true;
-                  alarmTime = DateTime(
-                    date!.year,
-                    date!.month,
-                    date!.day,
-                    time!.hour,
-                    time!.minute,
-                  );
-                }
+                isWithAlarm = true;
+                alarmTime = DateTime(
+                  date!.year,
+                  date!.month,
+                  date!.day,
+                  time!.hour,
+                  time!.minute,
+                );
               }
             },
             items: const [
