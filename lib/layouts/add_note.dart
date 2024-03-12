@@ -16,11 +16,11 @@ class AddNoteScreen extends StatefulWidget {
 }
 
 class _AddNoteScreenState extends State<AddNoteScreen> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  // }
 
   //controoler
   var noteConteroller = TextEditingController();
@@ -42,7 +42,10 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   ];
   var selectedColor = '#${Colors.amber.shade100.value.toRadixString(16)}';
   var isWithAlarm = false;
-  var alarmTime = "";
+  DateTime? alarmTime;
+  TimeOfDay? time;
+  DateTime? date;
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<NoteApp, AppStates>(
@@ -85,7 +88,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   context: context,
                   initialTime: TimeOfDay.now(),
                 ).then((value) {
-                  alarmTime += (value!.format(context)).toString();
+                  // alarmTime += (value!.format(context)).toString();
+                  time = value;
                 });
                 showDatePicker(
                   context: context,
@@ -93,9 +97,20 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   firstDate: DateTime.now(),
                   lastDate: DateTime.parse('2025-03-15'),
                 ).then((value) {
-                  alarmTime += DateFormat.yMMMd().format(value!);
+                  // alarmTime += DateFormat.yMMMd().format(value!);
+                  date = value;
                 });
-                isWithAlarm = true;
+
+                if (date != null && time != null) {
+                  isWithAlarm = true;
+                  alarmTime = DateTime(
+                    date!.year,
+                    date!.month,
+                    date!.day,
+                    time!.hour,
+                    time!.minute,
+                  );
+                }
               }
             },
             items: const [

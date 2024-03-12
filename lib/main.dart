@@ -1,14 +1,29 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_notes/helpers/db_helper.dart';
+import 'package:my_notes/helpers/notification_helper.dart';
 import 'package:my_notes/layouts/main_layout.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'package:my_notes/shared/observer.dart';
 import 'package:toast/toast.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  int c = await DBHelper.createDB();
+  await NotificationHelper().init();
+  // AndroidInitializationSettings initializationSettingsAndroid =
+  //     AndroidInitializationSettings('my_notes');
+  // InitializationSettings initializationSettings =
+  //     InitializationSettings(android: initializationSettingsAndroid);
+  // await flutterLocalNotificationsPlugin.initialize(
+  //   initializationSettings,
+  //    onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
+
+  // int c =
+  await DBHelper.createDB();
   Bloc.observer = MyBlocObserver();
 
   runApp(const MyApp());
@@ -66,4 +81,6 @@ class MyApp extends StatelessWidget {
       home: HomeScreen(),
     );
   }
+
+
 }

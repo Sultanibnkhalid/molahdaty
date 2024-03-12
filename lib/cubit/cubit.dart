@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import 'package:my_notes/cubit/states.dart';
 import 'package:my_notes/helpers/db_helper.dart';
+import 'package:my_notes/helpers/notification_helper.dart';
 import 'package:my_notes/layouts/add_note.dart';
 import 'package:my_notes/layouts/main_layout.dart';
 import 'package:my_notes/models/note_model.dart';
@@ -39,7 +40,7 @@ class NoteApp extends Cubit<AppStates> {
     emit(ChangedItemColorState());
   }
 
-  addNote(String content, col, context, bool isAlarm, String time) async {
+  addNote(String content, col, context, bool isAlarm, DateTime? time) async {
     if (content.isEmpty || content.trim() == "") {
       // Toast.show("empty note not saved",
       //     duration: Toast.lengthLong, gravity: Toast.center);
@@ -82,21 +83,26 @@ class NoteApp extends Cubit<AppStates> {
 
   //set alarm funcion
   static Future<void> setAlarm(
-      {required id, required time, required text, required title}) async {
-    await Alarm.init();
-    final alarmSettings = AlarmSettings(
-      id: id,
-      dateTime: DateTime.parse(time),
-      assetAudioPath: 'assets/audio/alarm1.mp3',
-      loopAudio: true,
-      vibrate: true,
-      volume: 0.8,
-      fadeDuration: 3.0,
-      notificationTitle: title,
-      notificationBody: text,
-      enableNotificationOnKill: true,
-    );
-    await Alarm.set(alarmSettings: alarmSettings);
+      {required id,
+      required time,
+      required String text,
+      required title}) async {
+    String body = text.length > 50 ? text.substring(0, 30) : text;
+    await NotificationHelper.addNoteAlarm(id, title, body, time);
+    // await Alarm.init();
+    // final alarmSettings = AlarmSettings(
+    //   id: id,
+    //   dateTime: DateTime.parse(time),
+    //   assetAudioPath: 'assets/audio/alarm1.mp3',
+    //   loopAudio: true,
+    //   vibrate: true,
+    //   volume: 0.8,
+    //   fadeDuration: 3.0,
+    //   notificationTitle: title,
+    //   notificationBody: text,
+    //   enableNotificationOnKill: true,
+    // );
+    // await Alarm.set(alarmSettings: alarmSettings);
     // Alarm.ringStream.stream.listen((_) => yourOnRingCallback());
   }
 }
