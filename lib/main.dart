@@ -6,6 +6,7 @@ import 'package:my_notes/helpers/notification_helper.dart';
 import 'package:my_notes/layouts/main_layout.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:my_notes/shared/observer.dart';
+import 'package:my_notes/shared/themes.dart';
 import 'package:toast/toast.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -14,15 +15,6 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationHelper().init();
-  // AndroidInitializationSettings initializationSettingsAndroid =
-  //     AndroidInitializationSettings('my_notes');
-  // InitializationSettings initializationSettings =
-  //     InitializationSettings(android: initializationSettingsAndroid);
-  // await flutterLocalNotificationsPlugin.initialize(
-  //   initializationSettings,
-  //    onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
-
-  // int c =
   await DBHelper.createDB();
   Bloc.observer = MyBlocObserver();
 
@@ -43,29 +35,29 @@ class MyApp extends StatelessWidget {
 
         //  Define the default brightness and colors.
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.amber.shade400,
-          // TRY THIS: Change to "Brightness.light"
-          //           and see that all colors change
-          //           to better contrast a light background.
+          seedColor: Colors.blue,
+          //     // TRY THIS: Change to "Brightness.light"
+          //     //           and see that all colors change
+          //     //           to better contrast a light background.
           brightness: Brightness.light,
         ),
 
-        // Define the default `TextTheme`. Use this to specify the default
-        // text styling for headlines, titles, bodies of text, and more.
+        //   // Define the default `TextTheme`. Use this to specify the default
+        //   // text styling for headlines, titles, bodies of text, and more.
         textTheme: const TextTheme(
             displayLarge: TextStyle(
               fontFamily: 'Whisper',
               fontSize: 15,
               fontWeight: FontWeight.normal,
             ),
-            // TRY THIS: Change one of the GoogleFonts
-            //           to "lato", "poppins", or "lora".
-            //           The title uses "titleLarge"
-            //           and the middle text uses "bodyMedium".
-            // titleLarge: GoogleFonts.oswald(
-            //   fontSize: 15,
-            //   fontStyle: FontStyle.normal,
-            // ),
+            //       // TRY THIS: Change one of the GoogleFonts
+            //       //           to "lato", "poppins", or "lora".
+            //       //           The title uses "titleLarge"
+            //       //           and the middle text uses "bodyMedium".
+            //       // titleLarge: GoogleFonts.oswald(
+            //       //   fontSize: 15,
+            //       //   fontStyle: FontStyle.normal,
+            //       // ),
             bodyMedium: TextStyle(
               color: Colors.black,
               fontFamily: 'ElMessiri',
@@ -81,6 +73,4 @@ class MyApp extends StatelessWidget {
       home: HomeScreen(),
     );
   }
-
-
 }

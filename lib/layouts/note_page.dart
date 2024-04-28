@@ -1,12 +1,16 @@
 import 'package:alarm/model/alarm_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+
 import 'package:my_notes/cubit/cubit.dart';
 import 'package:my_notes/cubit/states.dart';
+import 'package:my_notes/models/note_model.dart';
 
 class AddNoteScreen extends StatefulWidget {
   const AddNoteScreen({super.key});
@@ -16,12 +20,6 @@ class AddNoteScreen extends StatefulWidget {
 }
 
 class _AddNoteScreenState extends State<AddNoteScreen> {
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  // }
-
   //controoler
   var noteConteroller = TextEditingController();
   //key
@@ -31,35 +29,53 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   // var isShowBottomSheet = true;
 
   var colors = [
-    '#${Colors.amberAccent.value.toRadixString(16)}',
+    // '#${Colors.amber.value.toRadixString(16)}',
     '#${Colors.teal.shade100.value.toRadixString(16)}',
-    '#${Colors.lime.shade100.value.toRadixString(16)}',
-    '#${Colors.lightBlueAccent.value.toRadixString(16)}',
-    '#${Colors.orange.shade100.value.toRadixString(16)}',
+    '#${const Color.fromARGB(255, 245, 245, 236).value.toRadixString(16)}',
+    '#${Color.fromARGB(255, 222, 238, 245).value.toRadixString(16)}',
+    '#${const Color.fromARGB(255, 244, 225, 198).value.toRadixString(16)}',
     '#${Colors.blue.shade100.value.toRadixString(16)}',
     '#${Colors.amber.shade100.value.toRadixString(16)}',
-    '#${Colors.red.shade100.value.toRadixString(16)}',
+    '#${const Color.fromARGB(255, 249, 216, 220).value.toRadixString(16)}',
   ];
-  var selectedColor = '#${Colors.amber.shade100.value.toRadixString(16)}';
+  var selectedColor = '#${Colors.white.value.toRadixString(16)}';
   var isWithAlarm = false;
   DateTime? alarmTime;
   TimeOfDay? time;
-  DateTime? date;
-
+  DateTime date = DateTime.now();
+  NoteModele? note;
+  bool isOpen = false;
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<NoteApp, AppStates>(
       listener: (context, state) {},
       builder: (context, state) {
+        //check the state
+        isOpen = (state is OpenNoteState) ? true : false;
+        if (isOpen) {
+          String? tx = NoteApp.currentNote!.content;
+          selectedColor = NoteApp.currentNote!.color;
+          noteConteroller.text = tx!;
+        }
         return Scaffold(
           // key: ScffoldKey,
           appBar: AppBar(
-            backgroundColor: HexColor(NoteApp.get(context).color),
-            bottomOpacity: 20,
+            shadowColor: Colors.black,
+            
+            // clipBehavior: Clip.hardEdge,
+
+            // backgroundColor: Colors.blue,
+            // bottomOpacity: 20,
             leading: IconButton(
               onPressed: () async {
-                await NoteApp.get(context).addNote(noteConteroller.text,
-                    selectedColor, context, isWithAlarm, alarmTime);
+                if (isOpen) {
+                  await NoteApp.get(context).updateNote(noteConteroller.text,
+                      selectedColor, context, isWithAlarm, alarmTime);
+                } else {
+                  await NoteApp.get(context).addNote(noteConteroller.text,
+                      selectedColor, context, isWithAlarm, alarmTime);
+                }
+
                 //not this is first
                 //second step add check for the navigator
                 //when return to save the note
@@ -75,7 +91,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: Colors.yellow.shade400,
+            backgroundColor: Colors.white,
             type: BottomNavigationBarType.fixed,
             onTap: (value) async {
               //handel the event
@@ -103,9 +119,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
 
                 isWithAlarm = true;
                 alarmTime = DateTime(
-                  date!.year,
-                  date!.month,
-                  date!.day,
+                  date.year,
+                  date.month,
+                  date.day,
                   time!.hour,
                   time!.minute,
                 );
@@ -130,44 +146,45 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               ),
             ],
           ),
-          body: Container(
-            color: HexColor(selectedColor),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      controller: noteConteroller,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none, hintText: 'new note'),
-                      textInputAction: TextInputAction.newline,
-                      // style: TextStyle(lain),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              color: HexColor(selectedColor),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        controller: noteConteroller,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, hintText: 'new note'),
+                        textInputAction: TextInputAction.newline,
+                        // style: TextStyle(lain),
+                      ),
                     ),
-                  ),
-                  // Container(
-                  //   child: Row(children: [buildColorsItems(Colors.amber.shade700)]),
-                  // ),
-                ],
+                    // Container(
+                    //   child: Row(children: [buildColorsItems(Colors.amber.shade700)]),
+                    // ),
+                  ],
+                ),
               ),
             ),
           ),
 
-          bottomSheet: NoteApp.get(context).isShowBottomSheet
+          bottomSheet: NoteApp.isShowBottomSheet
               ? BottomSheet(
                   elevation: 10,
-                  backgroundColor: Colors.white12,
-                  shadowColor: Colors.black54,
-                  enableDrag: false,
-
+                  backgroundColor: Colors.white,
+                  shadowColor: Colors.black,
                   onClosing: () {
                     NoteApp.get(context).changeBottomSheetState();
                   },
                   builder: (context) => Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Container(
+                    child: SizedBox(
                       height: 40,
                       width: double.infinity,
                       child: ListView.separated(

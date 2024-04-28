@@ -52,12 +52,6 @@ class DBHelper {
   } //end creat db function
 
   static Future<Database?> openDB() async {
-    // sqfliteFfiInit();
-    // var path = await databaseFactory.getDatabasesPath().then((value) => value);
-    // var fullDBPath = p.join(path, dbName);
-    // var db = await databaseFactory.openDatabase(
-    //   fullDBPath,
-    // );
     Database? db;
     var path = '';
     if (Platform.isWindows || Platform.isLinux) {
@@ -86,18 +80,6 @@ class DBHelper {
   }
 
   static Future<int> insertNote(NoteModele note) async {
-    // sqfliteFfiInit();
-    // var path = await databaseFactory.getDatabasesPath();
-    // var fullDBPath = p.join(path, dbName);
-    // var db = await databaseFactory.openDatabase(
-    //   fullDBPath,
-    //   // options: OpenDatabaseOptions(
-    //   //   version: dbVERSION,
-    //   //   onCreate: (db, version) {
-    //   //     db.execute(noteStatment).then((value) => {value});
-    //   //   },
-    //   // ),
-    // );
     var db = await openDB().then((value) => value);
 
     return await db!.rawInsert(
@@ -114,15 +96,14 @@ class DBHelper {
 
   //delete note
   static Future<int> deleteNote(int id) async {
-    // sqfliteFfiInit();
-    // var path = await databaseFactory.getDatabasesPath();
-    // var fullDBPath = p.join(path, dbName);
-    // var db = await databaseFactory.openDatabase(
-    //   fullDBPath,
-    // );
     var db = await openDB().then((value) => value);
-
     return await db!.delete(tbNotes, where: 'id=?', whereArgs: [id]);
+  }
+
+  static Future<int> updateNote(NoteModele noteModele) async {
+    var db = await openDB().then((value) => value);
+    return db!.update(tbNotes, noteModele.toMap(),
+        where: 'id=?', whereArgs: [noteModele.id]);
   }
 }
 

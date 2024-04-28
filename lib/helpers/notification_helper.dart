@@ -19,20 +19,21 @@ class NotificationHelper {
 
     final InitializationSettings initializationSettings =
         InitializationSettings(
-            android: initializationSettingsAndroid, iOS: null);
-    tz.initializeTimeZones();
+      android: initializationSettingsAndroid,
+    );
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse:
-          (NotificationResponse notificationResponse) async {
-        // ...
-      },
-      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
-      // onDidReceiveNotificationResponse: (details) {
-      //   //handel notif..
+      // onDidReceiveNotificationResponse:
+      //     (NotificationResponse notificationResponse) async {
+      //   // ...
       // },
+      // onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+      onDidReceiveNotificationResponse: (details) {
+        //handel notif..
+      },
     );
+    tz.initializeTimeZones();
   }
 
   Future selectNotification(String payload) async {
@@ -43,8 +44,15 @@ class NotificationHelper {
     id,
     title,
     body,
-    zone,
+    DateTime? zone,
   ) async {
+    int hours = zone!.hour;
+    int munits = zone.minute;
+    hours -= DateTime.now().hour;
+    munits -= DateTime.now().minute;
+    if (munits < 0) munits = 0;
+    if (hours < 0) hours = 0;
+
     final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -53,7 +61,9 @@ class NotificationHelper {
       'note_alarm',
       channelDescription: 'This is a note alarm notification',
       icon: 'app_icon',
-      sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
+      sound: RawResourceAndroidNotificationSound('alrm1'),
+      
+      largeIcon: DrawableResourceAndroidBitmap('app_icon'),
     );
     // TZDateTime tim = DateTime.now().add(Duration(seconds: 20));
     const NotificationDetails platformChannelSpecifics =
@@ -63,7 +73,10 @@ class NotificationHelper {
         id,
         title,
         body,
-        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+        tz.TZDateTime.now(tz.local).add(Duration(
+          hours: hours,
+          minutes: munits,
+        )),
         platformChannelSpecifics,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);

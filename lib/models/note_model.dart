@@ -11,7 +11,6 @@ class NoteModele {
   int id = -1;
   int isLiked = 0;
   Image? imgbata = Image.asset(" assets/images/1.png");
-
   NoteModele(
       {required this.content,
       required this.date,
@@ -27,7 +26,7 @@ class NoteModele {
       'color': color,
       'favorite': isLiked,
       'date': date,
-      'time': time,
+      // 'time': time,
     };
   } //()=>end function
 
