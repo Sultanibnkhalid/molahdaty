@@ -1,76 +1,55 @@
-import 'package:bloc/bloc.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:my_notes/helpers/db_helper.dart';
-import 'package:my_notes/helpers/notification_helper.dart';
-import 'package:my_notes/layouts/main_layout.dart';
-// import 'package:google_fonts/google_fonts.dart';
-import 'package:my_notes/shared/observer.dart';
-import 'package:my_notes/shared/themes.dart';
-import 'package:toast/toast.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import 'package:molahdaty/helpers/db_helper.dart';
+import 'package:molahdaty/helpers/notification_helper.dart';
+import 'package:molahdaty/layouts/main_layout.dart';
+import 'package:molahdaty/shared/themes.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await NotificationHelper().init();
-  await DBHelper.createDB();
-  Bloc.observer = MyBlocObserver();
 
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Future.wait([
+      NotificationHelper().init(),
+      EasyLocalization.ensureInitialized(),
+  ]);
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [Locale('en'), Locale('ar')],
+      path: 'assets/translations',
+      saveLocale: true,
+      fallbackLocale: const Locale('en'),
+      child: const MyApp(),
+    ),
+  );
+
+  // Defer non-critical initializations to after first frame
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    try {
+      await DBHelper.initialize();
+      // Bloc.observer = MyBlocObserver();
+    } catch (e) {
+      debugPrint('Deferred initialization error: $e');
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    ToastContext().init(context);
     return MaterialApp(
-      title: 'sultan\'s notes',
-      theme: ThemeData(
-        useMaterial3: true,
-
-        //  Define the default brightness and colors.
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          //     // TRY THIS: Change to "Brightness.light"
-          //     //           and see that all colors change
-          //     //           to better contrast a light background.
-          brightness: Brightness.light,
-        ),
-
-        //   // Define the default `TextTheme`. Use this to specify the default
-        //   // text styling for headlines, titles, bodies of text, and more.
-        textTheme: const TextTheme(
-            displayLarge: TextStyle(
-              fontFamily: 'Whisper',
-              fontSize: 15,
-              fontWeight: FontWeight.normal,
-            ),
-            //       // TRY THIS: Change one of the GoogleFonts
-            //       //           to "lato", "poppins", or "lora".
-            //       //           The title uses "titleLarge"
-            //       //           and the middle text uses "bodyMedium".
-            //       // titleLarge: GoogleFonts.oswald(
-            //       //   fontSize: 15,
-            //       //   fontStyle: FontStyle.normal,
-            //       // ),
-            bodyMedium: TextStyle(
-              color: Colors.black,
-              fontFamily: 'ElMessiri',
-              fontWeight: FontWeight.w400,
-              fontSize: 30,
-            ),
-            displaySmall: TextStyle(
-              color: Colors.black,
-              fontFamily: 'ElMessiri',
-              fontWeight: FontWeight.w300,
-            )),
-      ),
-      home: HomeScreen(),
-    );
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      title: 'molahdaty',
+      theme: lightTheme,
+      home: const  HomeScreen());
   }
 }
+ 
+ 

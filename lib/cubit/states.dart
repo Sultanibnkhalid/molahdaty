@@ -1,5 +1,3 @@
-import 'package:my_notes/models/note_model.dart';
-
 abstract class AppStates {}
 
 class InitialState extends AppStates {}
@@ -21,4 +19,9 @@ class BottomSheetStateChanged extends AppStates {}
 class ChangedItemColorState extends AppStates {}
 
 class OpenNoteState extends AppStates {}
+
+class AboutUsStste extends AppStates {}
+
+class SettingsState extends AppStates {}
+
 // class EditNoteState extends AppStates {}

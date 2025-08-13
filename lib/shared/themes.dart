@@ -1,95 +1,65 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hexcolor/hexcolor.dart';
 
-const defaultColor = Colors.purple;
-// const Color  defaultSeconderyColor = Colors.purple.shade200;
+const defaultColor = Colors.cyan;
 
-ThemeData darkTheme = ThemeData(
-  fontFamily: 'Whisper',
-  primarySwatch: defaultColor,
-  floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: defaultColor,
-  ),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    selectedItemColor: Colors.purple.shade200,
-    unselectedItemColor: Colors.white,
-    elevation: 20.0,
-    backgroundColor: Colors.white,
-    type: BottomNavigationBarType.fixed,
-    // backgroundColor: Colors.red,
-  ),
-  scaffoldBackgroundColor: Colors.purple, //HexColor('333739'),
-  appBarTheme: AppBarTheme(
-    titleSpacing: 20.0,
-    iconTheme: const IconThemeData(
-      color: Colors.white,
-    ),
-    titleTextStyle: const TextStyle(
-      color: Colors.white,
-      fontSize: 20.0,
-      fontWeight: FontWeight.bold,
-    ),
-    // backwardsCompatibility: false,
-    systemOverlayStyle: const SystemUiOverlayStyle(
-      statusBarColor: Colors.white10,
-      statusBarIconBrightness: Brightness.light,
-    ),
-    backgroundColor: HexColor('333739'),
-    elevation: 0,
-  ),
-  textTheme: const TextTheme(
-    bodyMedium: TextStyle(
-      fontSize: 18.0,
-      fontWeight: FontWeight.w600,
-      color: Colors.white,
-    ),
-  ),
-);
-
-//light theme
 ThemeData lightTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: defaultColor,
+    brightness: Brightness.light,
+  ),
   fontFamily: 'ElMessiri',
   textTheme: const TextTheme(
     displayLarge: TextStyle(
-      fontFamily: 'Whisper',
-      fontSize: 15,
-      fontWeight: FontWeight.normal,
+      fontFamily: 'ElMessiri', // Fixed typo
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+      color: Color(0xFF00363D),
     ),
-    // bodyText1: TextStyle(
-    //   fontSize: 18.0,
-    //   fontWeight: FontWeight.w600,
-    //   color: Colors.white,
-    // ),
+    displayMedium: TextStyle(
+      fontSize: 16.0,
+      fontWeight: FontWeight.w500,
+      color: Color(0xFF00363D),
+    ),
+    displaySmall: TextStyle(
+      fontSize: 13.0,
+      fontWeight: FontWeight.normal,
+      color: Color(0xFF00363D),
+    ),
   ),
-  primarySwatch: defaultColor,
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: defaultColor,
+    backgroundColor: Colors.cyan,
+    foregroundColor: Colors.white,
+    elevation: 4,
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    selectedItemColor: defaultColor,
+    selectedItemColor: Colors.cyanAccent,
+    unselectedItemColor: Colors.grey,
     elevation: 20.0,
     type: BottomNavigationBarType.fixed,
+    backgroundColor: Colors.white,
   ),
-  scaffoldBackgroundColor: Colors.white,
-  appBarTheme: AppBarTheme(
-    color: Colors.purple,
-    titleSpacing: 20.0,
-    iconTheme: const IconThemeData(
-      color: Colors.black,
+  drawerTheme: const DrawerThemeData(
+    backgroundColor: Colors.white,
+    elevation: 20.0,
+  ),
+  appBarTheme: const AppBarTheme(
+    titleSpacing: 10.0,
+    iconTheme: IconThemeData(
+      color: Color(0xFF00363D),
     ),
-    titleTextStyle: const TextStyle(
-      color: Colors.black,
+    titleTextStyle: TextStyle(
+      color: Color(0xFF00363D),
       fontSize: 20.0,
       fontWeight: FontWeight.bold,
+      fontFamily: 'ElMessiri',
     ),
-    // backwardsCompatibility: false,
-    systemOverlayStyle: const SystemUiOverlayStyle(
+    systemOverlayStyle: SystemUiOverlayStyle(
       statusBarColor: Colors.white10,
       statusBarIconBrightness: Brightness.dark,
     ),
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.cyan,
     elevation: 0,
   ),
 );

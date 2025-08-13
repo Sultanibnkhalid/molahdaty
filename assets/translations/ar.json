@@ -1,0 +1,30 @@
+{
+    "molahdaty":"ملاحظتي",
+    "MY NOTES":"ملاحظاتي",
+    "My Notes":"ملاحظاتي",
+    "Home":"الرئيسية",
+    "Add Note":"ملاحظة جديدة",
+    "Settings":"الاعدادات",
+    "About": "حول التطبيق",
+    "Delete Note":"حذف ملاحظة",
+    "Are you sure you want to delete this note?":"هل انت متاكد انك تريد حذف هذه الملاحظة",
+    "Cancel": "إلغاء",
+    "Delete": "حذف",
+    "alarm":"تذكير",
+    "color":"تمييز",
+    "new note": "ملاظة جديدة",
+    "English":"انجليزي",
+    "Arabic":"عربي",
+    "About This App":"حول التطبيق",
+    "This app is designed to help you manage your notes effectively.You can add, edit, and delete notes, and categorize them for better organization.":"هذا التطبيق معد ليساعدك في تدوين وادارة الملاحظات والمذكرات الخاصة بك بطريقة سهلة ",
+    "Version 1.0.0":"Version 1.0.0",
+    "Developed by Your Sultan Khaled":"طور من قبل م: سلطان الشجيفي",
+    "For more information, visit our website or contact support.":"للمزيد من المعلومات، يمكنك زيارة موقعنا او التواصل بالدعم ",
+    
+    "Note added successfully": "تم الحفظ بنجاح",
+    "One Note deleted":"نم حذف ملاحظة واحدة",
+    "Note updated successfully": "تم حفظ التعدبل",
+    "No text provided":"لا يوجد نص للعرض " , 
+    "Thank you for using our app!":"شكرا لاستخدامك تطبيقنا!"
+
+}

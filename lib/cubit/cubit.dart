@@ -1,16 +1,16 @@
-import 'package:alarm/alarm.dart';
-import 'package:alarm/model/alarm_settings.dart';
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:molahdaty/components/toast.dart';
 
-import 'package:my_notes/cubit/states.dart';
-import 'package:my_notes/helpers/db_helper.dart';
-import 'package:my_notes/helpers/notification_helper.dart';
-import 'package:my_notes/layouts/note_page.dart';
-import 'package:my_notes/layouts/main_layout.dart';
-import 'package:my_notes/models/note_model.dart';
+import 'package:molahdaty/cubit/states.dart';
+import 'package:molahdaty/helpers/db_helper.dart';
+import 'package:molahdaty/helpers/notification_helper.dart';
+import 'package:molahdaty/layouts/about_layout.dart';
+import 'package:molahdaty/layouts/note_page.dart';
+import 'package:molahdaty/layouts/main_layout.dart';
+import 'package:molahdaty/layouts/settings_layout.dart';
+import 'package:molahdaty/models/note_model.dart';
 
 class NoteApp extends Cubit<AppStates> {
   NoteApp() : super(InitialState());
@@ -19,41 +19,47 @@ class NoteApp extends Cubit<AppStates> {
   static NoteModele? currentNote;
   //screensList
   static List<dynamic> screens = [
-    HomeScreen(),
-    AddNoteScreen(),
+    const HomeScreen(),
+    const AddNoteScreen(),
+    const About(),
+    const Settings(),
   ];
   //selected screen index
   static int selectedScreen = 0;
   // selected color for the note
   static String selectedColor = '#${Colors.white.value.toRadixString(16)}';
-  //varaiables and func to add not screen
-  //show colors varialbe
+ 
   bool showColors = false;
-  //for bottom sheet check
+ 
   static bool isShowBottomSheet = false;
   String color = '#${Colors.white.value.toRadixString(16)}'; //'#0xFFBBBD0';
-  // '#${Colors.amberAccent.toString().replaceAll('X', 'x')}';
+ 
 
   //function change bottom sheat stste
-  changeBottomSheetState() {
+  void changeBottomSheetState() {
     isShowBottomSheet = !isShowBottomSheet;
     emit(BottomSheetStateChanged());
   }
 
   //function change note color stste
-  setColor(String color) {
+  void setColor(String color) {
     selectedColor = color;
     isShowBottomSheet = !isShowBottomSheet;
     emit(ChangedItemColorState());
   }
 
   //function add note
-  addNote(String content, col, context, bool isAlarm, DateTime? time) async {
+  Future<void> addNote(String content, col, context, bool isAlarm, DateTime? time) async {
     if (content.isEmpty || content.trim() == "") {
       // Toast.show("empty note not saved",
       //     duration: Toast.lengthLong, gravity: Toast.center);
       selectedScreen = 0;
       emit(NoteNotSavedState());
+      showToast(
+        text: 'empty note not saved',
+        color: Colors.red,
+        context: context, // Ensure context is not null
+      );
     } else {
       String now = DateTime.now().toString();
       // String formattedDate = DateFormat('yyyy-MM-dd:kk:mm').format(now);
@@ -65,10 +71,16 @@ class NoteApp extends Cubit<AppStates> {
         await NotificationHelper().addNoteAlarm(r,
             DateFormat('yyyy-MM-dd:kk:mm').format(DateTime.now()), body, time);
       }
+      showToast(
+      text: 'Note added successfully',
+      color: Colors.green,
+      context: context,  
+    );
     }
+    
     selectedScreen = 0;
     getNotes();
-    // emit(SaveNoteState());
+    
   }
 
   //store  notes data from db
@@ -85,22 +97,25 @@ class NoteApp extends Cubit<AppStates> {
   }
 
   //function to open  note
-  openNote(int index) {
+  void openNote(int index) {
     selectedScreen = 1;
     //set current note
     currentNote = notes[index];
     //emit state
     emit(OpenNoteState());
+
   }
 
   //go to add note
-  newNote() {
+  void newNote() {
     selectedScreen = 1;
     emit(NewNoteState());
   }
+  //go to about us
+ 
 
   //function to update note
-  updateNote(String content, col, context, bool isAlarm, DateTime? time) async {
+  Future<void> updateNote(String content, col, context, bool isAlarm, DateTime? time) async {
     String now = DateTime.now().toString();
     // String formattedDate = DateFormat('yyyy-MM-dd:kk:mm').format(now);
     int r = await DBHelper.updateNote(NoteModele(
@@ -111,6 +126,8 @@ class NoteApp extends Cubit<AppStates> {
         color: col));
     // Navigator.pop(context);
     if (isAlarm) {
+      // Cancel any existing alarm for this note
+      await NotificationHelper().cancelNotification(currentNote!.id);
       String body = content.length > 50 ? content.substring(0, 30) : content;
       await NotificationHelper().addNoteAlarm(
           r, DateFormat('yyyy-MM-dd:kk:mm').format(DateTime.now()), body, time);
@@ -118,31 +135,26 @@ class NoteApp extends Cubit<AppStates> {
     // }
     selectedScreen = 0;
     getNotes();
-    // emit(SaveNoteState());
+    showToast(
+      text: 'Note updated successfully',
+      color: Colors.green,
+      //current context is needed for showing the toast
+      context: context, // Ensure context is not null
+    );
   }
 
-  //set alarm funcion
-  // static Future<void> setAlarm(
-  //     {required id,
-  //     required time,
-  //     required String text,
-  //     required title}) async {
-  //   String body = text.length > 50 ? text.substring(0, 30) : text;
-  //   await NotificationHelper().addNoteAlarm(id, title, body, time);
-  //   // await Alarm.init();
-  //   // final alarmSettings = AlarmSettings(
-  //   //   id: id,
-  //   //   dateTime: DateTime.parse(time),
-  //   //   assetAudioPath: 'assets/audio/alarm1.mp3',
-  //   //   loopAudio: true,
-  //   //   vibrate: true,
-  //   //   volume: 0.8,
-  //   //   fadeDuration: 3.0,
-  //   //   notificationTitle: title,
-  //   //   notificationBody: text,
-  //   //   enableNotificationOnKill: true,
-  //   // );
-  //   // await Alarm.set(alarmSettings: alarmSettings);
-  //   // Alarm.ringStream.stream.listen((_) => yourOnRingCallback());
-  // }
+  //function to delete note
+  Future<void> deleteNote(int id, context) async {
+    await DBHelper.deleteNote(id);
+    getNotes();
+    showToast(
+      text: 'One Note deleted',
+      color: Colors.red,
+      //current context is needed for showing the toast
+      context: context, // Ensure context is not null
+    );
+
+    emit(DeleteNoteState());
+  }
+ 
 }
