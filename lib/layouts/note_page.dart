@@ -49,18 +49,16 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           noteConteroller.text = tx!;
         }
         return PopScope(
-          canPop: true,
+          canPop: false,
           onPopInvokedWithResult:
               (didPop, result){
-            if (didPop) {
-              if (isOpen) {
+            if (isOpen) {
                 NoteApp.get(context).updateNote(
                     noteConteroller.text, selectedColor, context, isWithAlarm, alarmTime);
               } else {
                 NoteApp.get(context).addNote(
                     noteConteroller.text, selectedColor, context, isWithAlarm, alarmTime);
-              }  
-            }    
+              }   
           },
           child: Scaffold(
             appBar: AppBar(
